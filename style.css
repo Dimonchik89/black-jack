@@ -1,0 +1,157 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Reset */
+
+/* Убираем внутренние отступы */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Убираем внешние отступы */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Выставляем основные настройки по-умолчанию для body */
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* Удаляем стандартную стилизацию для всех ul и il, у которых есть атрибут class*/
+ul[class],
+ol[class] {
+  list-style: none;
+}
+
+/* Элементы a, у которых нет класса, сбрасываем до дефолтных стилей */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Упрощаем работу с изображениями */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Указываем понятную периодичность в потоке данных у article*/
+article > * + * {
+  margin-top: 1em;
+}
+
+/* Наследуем шрифты для инпутов и кнопок */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Удаляем все анимации и переходы для людей, которые предпочитай их не использовать */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+
+.header {
+    text-align: center;
+    padding: 15px 0;
+}
+
+.header__title {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.control-panel {
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn {
+    padding: 10px 15px;
+
+    border: 1px solid #900;
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    background: #fff;
+}
+
+.control-status {
+    margin: 30px 0;
+
+    display: flex;
+    justify-content: center;
+}
+
+.control__field {
+    width: 50%;
+    padding: 20px 15px;
+
+    border: 1px solid #900;
+    border-radius: 5px;
+}
+
+.field-title {
+    text-align: center;
+}
+
+.field-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.player {
+    width: 25%;
+    padding: 10px 15px;
+
+    border: 1px solid #900;
+    border-radius: 5px;
+}
+
+.player-title {
+    text-align: center;
+}
+
+.card-block {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 25%;
+    height: 100px;
+    padding: 10px 15px;
+    margin: 20px 10px;
+    border: 1px solid #000;
+}
