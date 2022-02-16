@@ -65,9 +65,6 @@ class Deck {
     }
 }
 
-// const createNewDeck = new Deck();
-// createNewDeck.createDeck();
-// createNewDeck.shuffleDeck()
 
 
 class Player {
@@ -126,8 +123,6 @@ class Player {
     }
 }
 
-// const player = new Player(4);
-
 class RenderUi {
     constructor() {
        
@@ -175,13 +170,9 @@ class RenderUi {
     }
 }
 
-// const renderPlayer = new RenderUi(player.createPlayers());
-// renderPlayer.renderPlayers();
-
 
 class StartGames {
     constructor() {
-        // this.player = new player;
         this.deck = new Deck();
         this.player = new Player(4);
         this.renderUi = new RenderUi();
@@ -258,7 +249,7 @@ class StartGames {
                 this.player.nextActivePlayer();  
                 console.log(activePlayer);
                 if(activePlayer == allPlayersLength - 1) {
-                    this.renderUi.renderPlayers();
+                    // this.renderUi.renderPlayers();
                     this.resultGame()
                 }
             }
