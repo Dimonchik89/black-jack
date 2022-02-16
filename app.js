@@ -1,28 +1,13 @@
 const startBtn = document.querySelector("#start");
 const moreBtn = document.querySelector("#more");
 const stayBtn = document.querySelector("#stay");
+const newGame = document.querySelector("#new");
 const fieldContent = document.querySelector(".field-content");
+const resultField = document.querySelector(".control__field");
 const players = ["Dima", "Yan", "Denis", "Misha"];
 const suits = ["spades", "hearts", "diams", "clubs"];
 const values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
 const deck = [];
-
-// const createPlayer = (players) => {
-//     players.map(item => {
-//         const player = document.createElement("div");
-//         player.classList.add("player");
-//         player.id = item;
-//         const playerTitle = document.createElement("p");
-//         playerTitle.classList.add("player-title");
-//         playerTitle.textContent = item;
-//         player.appendChild(playerTitle);
-//         const cardBlock = document.createElement("div");
-//         cardBlock.classList.add("card-block");
-//         player.appendChild(cardBlock);
-
-//         fieldContent.appendChild(player);
-//     })
-// }
 
 const getWeight = (v) => {
     switch (v) {
@@ -80,17 +65,14 @@ class Deck {
     }
 }
 
-const createNewDeck = new Deck();
-createNewDeck.createDeck();
-createNewDeck.shuffleDeck()
-// console.log(createNewDeck.getCart());
-
-// createPlayer(players)
+// const createNewDeck = new Deck();
+// createNewDeck.createDeck();
+// createNewDeck.shuffleDeck()
 
 
 class Player {
     constructor(playersCount) {
-        this.playersCount = playersCount;
+        this.playersCount = 4;
         this.players = [];
         this.activePlayerCount = 0;
     }
@@ -100,15 +82,31 @@ class Player {
         return player;
     }
 
+    getActivePlayer(){
+        return this.players[this.activePlayerCount]
+    }
+
     createPlayers() {
         for(let i = 0; i < this.playersCount; i++) {
             this.players.push(this.createPlayer(i))
         }
         return this.players;
     }
+    pushCardToActivePlayer(card){
+        const activePlayer = this.getActivePlayer();
+        console.log(activePlayer);
+        activePlayer.carts.push(card)
+    }
 
     setActivePlayer() {
-        const activePlayer = this.players[this.activePlayerCount];
+        const allPlayers = document.querySelectorAll(".player")
+        for(let i = 0; i < allPlayers.length; i++) {
+            if(allPlayers[i].id == this.activePlayerCount) {
+                allPlayers[i].classList.add("active__player")
+            } else {
+                allPlayers[i].classList.remove("active__player")
+            }
+        }
     }
 
     nextActivePlayer() {
@@ -118,30 +116,26 @@ class Player {
 
     resetPlayer() {
         this.players = [];
+        this.activePlayerCount = 0;
     }
 
     totalScorePlayer(thisPlayer) {
         thisPlayer.totalScore = thisPlayer.carts.reduce((acc, item) => {
             return acc += item.weight;
         }, 0)
-        console.log(thisPlayer)
-
     }
 }
 
-const player = new Player(4);
-
-player.setActivePlayer();
-
+// const player = new Player(4);
 
 class RenderUi {
-    constructor(players) {
-        this.players = players;
+    constructor() {
+       
     }
 
-    renderPlayers() {
+    renderPlayers(players) {
         fieldContent.innerHTML = "";
-        this.players.map(item => {
+        players.map(item => {
             
             this.renderCard(item)
         })
@@ -153,17 +147,17 @@ class RenderUi {
         player.id = item.id;
         const playerTitle = document.createElement("p");
         playerTitle.classList.add("player-title");
-        playerTitle.textContent = item.id;
+        playerTitle.textContent = `Имя игрока: ${item.id}`;
         player.appendChild(playerTitle);
-        const total = document.createElement("span");
+        const total = document.createElement("p");
 
         const cardBlock = document.createElement("div");
-        cardBlock.classList.add("card-block");
+        cardBlock.classList.add("playingCards");
         player.appendChild(cardBlock);
-        const cartinHand = item.carts.map(cart => (
-            `<div class="card">
-                <span>${cart.value}</span>
-                <span>&${cart.suit};</span>
+        const cartinHand = item.carts?.map(cart => (
+            `<div class="card rank-1 ${cart.suit}">
+                 <span class="rank">${cart.value}</span>    
+                 <span class="suit">&${cart.suit};</span>
             </div>`
         ));
         const totalScore = item.carts.reduce((acc, elem) => {
@@ -171,83 +165,148 @@ class RenderUi {
         }, 0)
         
         cardBlock.innerHTML = cartinHand;
-        console.log
         total.innerHTML = totalScore;
-        player.appendChild(total)
+        playerTitle.append(total)
         fieldContent.appendChild(player);
+    }
+
+    resetPlayers() {
+        this.players = []
     }
 }
 
-const renderPlayer = new RenderUi(player.createPlayers());
-renderPlayer.renderPlayers();
+// const renderPlayer = new RenderUi(player.createPlayers());
+// renderPlayer.renderPlayers();
 
 
 class StartGames {
-    constructor(player) {
-        this.player = player;
+    constructor() {
+        // this.player = new player;
+        this.deck = new Deck();
+        this.player = new Player(4);
+        this.renderUi = new RenderUi();
+    }
+
+    init() {
+        startBtn.addEventListener("click", this.startGame.bind(this))
+        
+        moreBtn.addEventListener("click", this.moreCart.bind(this))
+        
+        stayBtn.addEventListener("click",this.stay.bind(this))
+        
+        newGame.addEventListener("click", (e) => {
+            this.player.resetPlayer();
+
+            // this.startGame()
+            console.log(this.player);
+            // renderPlayer.resetPlayers();
+            // player.resetPlayer();
+            // // window.location.reload()
+            // startBtn.removeAttribute("disabled")
+            // e.target.setAttribute("disabled", "disabled")
+            // renderPlayer.renderPlayers()
+
+        })
     }
 
     startGame() {
-        const thisPlayer = this.player.players[this.player.activePlayerCount]
-        thisPlayer.carts.push(createNewDeck.getCart())
-        renderPlayer.renderPlayers();
+        this.player.resetPlayer();
+        this.deck.createDeck()
+        this.deck.shuffleDeck()
+        this.player.createPlayers()
+        console.log(this.player.players);
+        const card = this.deck.getCart();
+        this.player.pushCardToActivePlayer(card);
+        this.renderUi.renderPlayers(this.player.players)
+
+        this.player.setActivePlayer()
+        
+        // renderPlayer.renderPlayers()
+        // player.setActivePlayer()
+    }
+
+    stay(){
+        this.player.nextActivePlayer();
+        this.moreCart();
     }
 
     moreCart() {
-        const allPlayers = this.player.players.length;
-        const activePlayer = player.activePlayerCount;
+        const allPlayersLength = this.player.players.length;
+        const activePlayer = this.player.activePlayerCount;
 
-        if(activePlayer > allPlayers - 1) {
-            let vinner;
-            let result = 0;
-            for(let i = 0; i < player.players.length; i++) {
-                if(player.players[i].totalScore > result && player.players[i].totalScore <= 21) {
-                    result = player.players[i].totalScore;
-                    vinner = player.players[i]
-                }
-            }
-            if(result === 0) {
-                alert("Все проиграли")
-                window.location.reload()
-            } else {
-                alert(`Победил ${vinner.id} игрок с результатом ${vinner.totalScore}`)
-                window.location.reload()
-            }
-            console.log(vinner);
-        } else {
+        if(activePlayer > allPlayersLength - 1) {
+            // let winner;
+            // let result = 0;
+            // for(let i = 0; i < player.players.length; i++) {
+            //     if(player.players[i].totalScore > result && player.players[i].totalScore <= 21) {
+            //         result = player.players[i].totalScore;
+            //         winner = player.players[i]
+            //     }
+            // }
 
+            this.resultGame()
+        }  else {
             const thisPlayer = this.player.players[this.player.activePlayerCount]
-            thisPlayer.carts.push(createNewDeck.getCart())
+            console.log(this.deck);
+            thisPlayer.carts.push(this.deck.getCart())
+            console.log(thisPlayer);
             const allScore = thisPlayer.carts.reduce((acc, item) => {
                 return acc += item.weight;
             }, 0);
-            player.totalScorePlayer(thisPlayer);
-            
+            this.player.totalScorePlayer(thisPlayer);
             if(allScore > 21) {
-                player.nextActivePlayer();  
+                this.player.nextActivePlayer();  
+                console.log(activePlayer);
+                if(activePlayer == allPlayersLength - 1) {
+                    this.renderUi.renderPlayers();
+                    this.resultGame()
+                }
             }
-    
             
-            renderPlayer.renderPlayers();
-
+            this.renderUi.renderPlayers(this.player.players);
+            this.player.setActivePlayer();
         }
         
+        
+    }
 
+    resultGame() {
+        let winner = [];
+            let result = 0;
+            for(let i = 0; i < this.player.players.length; i++) {
+                if(this.player.players[i].totalScore == result) {
+                    result = this.player.players[i].totalScore;
+                    winner = [
+                        ...winner,
+                        this.player.players[i]
+                    ]
+                }
+                if(this.player.players[i].totalScore > result && this.player.players[i].totalScore <= 21) {
+                    result = this.player.players[i].totalScore;
+                    winner = [
+                        this.player.players[i]
+                    ]
+                }
+            }
+            if(result === 0) {
+                resultField.innerHTML = "Все проиграли"
+                newGame.removeAttribute("disabled")
+            } else {
+                let resultArr = [];
+                for(let i = 0; i < winner.length; i++) {
+                    let oneWinner = `Победил игрок ${winner[i].id} с результатом ${winner[i].totalScore}`;
+                    resultArr = [
+                        ...resultArr,
+                        oneWinner
+                    ]
+                }
+                resultField.innerHTML = resultArr
+                newGame.removeAttribute("disabled")
+            }
     }
 
 }
 
-const start = new StartGames(player);
+ const game = new StartGames();
+ game.init();
 
-startBtn.addEventListener("click", () => {
-    start.startGame()
-})
-
-moreBtn.addEventListener("click", () => {
-    start.moreCart();
-})
-
-stayBtn.addEventListener("click", () => {
-    player.nextActivePlayer();
-    start.moreCart();
-})
