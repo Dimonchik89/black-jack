@@ -13,6 +13,7 @@ const source = require('vinyl-source-stream');
 const babelify = require('babelify');
 const htmlmin = require('gulp-htmlmin');
 
+
 function scss() {
     return src("./src/style/index.scss")
             .pipe(sass())
@@ -52,8 +53,9 @@ function browsersync() {
         server: "dist"
     })
 
-    watch("./src/style/index.scss", scss).on("change", sync.reload);
+    watch("./src/style/**.scss", scss).on("change", sync.reload);
     watch("./src/script/index.js", script).on("change", sync.reload);
+    watch("./src/index.html", html).on("change", sync.reload);
 }
 
 function clear() {
@@ -69,10 +71,10 @@ exports.clear = clear;
 exports.img = img;
 exports.html = html;
 
-// exports.default = series(clear, html, scss, script, img, browsersync)
+exports.default = series(clear, html, scss, script, img, browsersync)
 
-if(process.env.NODE_ENV == "production") {
-    exports.default = series(clear, html, scss, img, script)
-} else {
-    exports.default = series(clear, html, scss, script, img, browsersync)
-}
+// if(process.env.NODE_ENV == "production") {
+//     exports.default = series(clear, html, scss, img, script)
+// } else {
+//     exports.default = series(clear, html, scss, script, img, browsersync)
+// }
